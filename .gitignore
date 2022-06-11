@@ -1,6 +1,7 @@
 venv/
 __pycache__/
 mysite/mysite/settings.py
+mysite/db.sqlite3
 
 
 
