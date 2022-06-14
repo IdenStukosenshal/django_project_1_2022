@@ -5,9 +5,11 @@ def post_list(request):
     posts = Post.published.all() # запрашиваем все "published" посты из базы данных
     return render(request, 'blog/post/list.html', {'posts': posts})
 
-def post_detail(request, year, month, day, post):
-    post = get_object_or_404(Post, slug=post, status='published', publish__year=year,
+def post_detail(request, year, month, day, post123):
+    post = get_object_or_404(Post, slug=post123, status='published', publish__year=year,
                              publish__month=month, publish__day=day)
+    # Функция возвращает объект по указанным параметрам или 404
+    #slug (unique_for_date='publish'), поэтому у каждого поста уникальный slug
     return render(request, 'blog/post/detail.html', {'post': post})
 
 

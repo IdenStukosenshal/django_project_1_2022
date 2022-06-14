@@ -32,7 +32,11 @@ class Post(models.Model):
     published = PublishedManager() # новый менеджер
 
     def get_absolute_url(self):
+        """Возвращает ссылку на пост
+        reverse() дает возможность получать URL, указав имя
+        шаблона и параметры"""
         return reverse('blog:post_detail', args=[self.publish.year, self.publish.month, self.publish.day, self.slug])
+
 
     class Meta:
         ordering = ('-publish',) # по убыванию даты "-"
