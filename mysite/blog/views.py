@@ -1,14 +1,15 @@
 from django.shortcuts import render, get_object_or_404
 from.models import Post
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-
+from django.views.generic import ListView
 
 def post_list(request):
     object_list = Post.published.all() # запрашиваем все "published" посты из базы данных
     paginator = Paginator(object_list, 3) #инициализир обж класса Paginator, указав кол-во постов на каждой странице
     page = request.GET.get('page') #Извлекаем из запроса GET параметр page, указывающий текущую стр
     try:
-        posts = paginator.page(page) #получаем список обж на нужной стр с помощью метода page класса Paginator
+        posts = paginator.page(page) #получаем список обж на нужной стр с помощью метода page класса Paginator,
+                                    #после объект передаётся в list.html, в конце передаётся в pagination.html
     except PageNotAnInteger:
         #Если страница не целое число
         posts = paginator.page(1)
@@ -19,7 +20,7 @@ def post_list(request):
     #posts = Post.published.all()
     #return render(request, 'blog/post/list.html', {'posts': posts})
 
-    return render(request, 'blog/post/list.html', {'page': page, 'posts': posts}) #Передаём номер страницы и объекты в шаблон
+    return render(request, 'blog/post/list.html', {'page': page, 'posts': posts}) #Передаём номер страницы и объект в шаблон
 
 def post_detail(request, year, month, day, post123):
     post = get_object_or_404(Post, slug=post123, status='published', publish__year=year,
@@ -37,6 +38,11 @@ render(request,'users/register.html', {'form': form, 'first_name': 'John'})
 То, что вы предоставляете в контексте, доступно в шаблоне
 """
 
-
+class PostListView(ListView):
+    """Аналог post_list"""
+    queryset = Post.published.all()
+    context_object_name = "posts"
+    paginate_by = 3
+    template_name = 'blog/post/list.html'
 
 
