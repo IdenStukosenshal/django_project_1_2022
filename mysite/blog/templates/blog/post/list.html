@@ -18,3 +18,7 @@
    <!--{% include "pagination.html" with page=posts %}-->
   {% include "pagination.html" with page=page_obj %}
 {% endblock %}
+
+<!--Для поддержки постраничного вывода мы должны передавать объект стра-
+ницы, содержащий список статей, в HTML-шаблон. Базовый обработчик Djan-
+go ListView передает этот объект в качестве переменной с именем page_obj-->
