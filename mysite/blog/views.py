@@ -61,6 +61,7 @@ def post_share(request, post_id): # Получение статьи по id
             post_url = request.build_absolute_uri(post.get_absolute_url()) #абсолютная ссылка на статью
 
             subject = f'{cd["name"]} ({cd["email"]}) recommends you reading" {post.title}"'
+            #subject = f'{cd["name"]} recommends you reading" {post.title}'
             message = f'Read"{post.title}" at {post_url}\n\n{cd["name"]}\'s comments: {cd["comments"]}'
             send_mail(subject, message, '', [cd["to"],]) # https://django.fun/docs/django/ru/4.0/topics/email/
             sent = True # Требуются параметры subject, message, from_email и recipient_list, from_email: Строка. Если None, Django будет использовать значение параметра DEFAULT_FROM_EMAIL
