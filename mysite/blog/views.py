@@ -1,8 +1,8 @@
 from django.shortcuts import render, get_object_or_404
-from.models import Post
+from.models import Post, Comment
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.views.generic import ListView
-from .forms import EmailPostForm1
+from .forms import EmailPostForm1, CommentForm
 from django.core.mail import send_mail
 
 def post_list(request):
@@ -32,7 +32,20 @@ def post_detail(request, year, month, day, post123):
                              publish__month=month, publish__day=day)
     # Функция возвращает объект по указанным параметрам или 404
     #slug (unique_for_date='publish'), поэтому у каждого поста уникальный slug, если они созданы в один день
-    return render(request, 'blog/post/detail.html', {'post': post})
+    '''Список активных комментариев для статьи'''
+    comments = post.comments.filter(active=True) #менеджер определён в модели, related_name
+    new_comment = None
+    if request.method == 'POST':
+        #если коммент отправлен
+        comment_form = CommentForm(data=request.POST) #заполняем форму данными из запроса
+        if comment_form.is_valid():
+            new_comment = comment_form.save(commit=False) # создаём но не сохраняем в бд
+            new_comment.post = post # привязываем комм к статье
+            new_comment.save()
+    else:
+        comment_form = CommentForm()
+    return render(request, 'blog/post/detail.html', {'post': post, 'comments': comments,
+                                                     'new_comment': new_comment, 'comment_form': comment_form})
 
 
 """Контекст
@@ -65,8 +78,7 @@ def post_share(request, post_id): # Получение статьи по id
             message = f'Read"{post.title}" at {post_url}\n\n{cd["name"]}\'s comments: {cd["comments"]}'
             send_mail(subject, message, '', [cd["to"],]) # https://django.fun/docs/django/ru/4.0/topics/email/
             sent = True # Требуются параметры subject, message, from_email и recipient_list, from_email: Строка. Если None, Django будет использовать значение параметра DEFAULT_FROM_EMAIL
-            return render(request, 'blog/post/share.html', {'post': post, 'form': form, 'sent': sent})
     else:
         form = EmailPostForm1()
-        return render(request, 'blog/post/share.html', {'post': post, 'form': form, 'sent': sent})
+    return render(request, 'blog/post/share.html', {'post': post, 'form': form, 'sent': sent})
 
