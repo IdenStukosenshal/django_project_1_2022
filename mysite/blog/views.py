@@ -4,9 +4,17 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.views.generic import ListView
 from .forms import EmailPostForm1, CommentForm
 from django.core.mail import send_mail
+from taggit.models import Tag
 
-def post_list(request):
+
+def post_list(request, tag_slug=None):
     object_list = Post.published.all() # запрашиваем все "published" посты из базы данных
+
+    tag = None
+    if tag_slug:
+        tag = get_object_or_404(Tag, slug=tag_slug)
+        object_list = object_list.filter(tags__in=[tag])
+
     paginator = Paginator(object_list, 3) #инициализир обж класса Paginator, указав кол-во постов на каждой странице
     page = request.GET.get('page') #Извлекаем из запроса GET параметр page, указывающий текущую стр
     try:
@@ -20,7 +28,7 @@ def post_list(request):
         posts = paginator.page(paginator.num_pages)
 
     return render(request, 'blog/post/list.html',
-                  {'page': page, 'posts': posts})  # Передаём номер страницы и объект в шаблон
+                  {'page': page, 'posts': posts, 'tag': tag})  # Передаём номер страницы и объект в шаблон
 
     #posts = Post.published.all()
     #return render(request, 'blog/post/list.html', {'posts': posts})
@@ -62,6 +70,7 @@ class PostListView(ListView):
     context_object_name = "posts"  # если не использовать, по умолчанию переменная контекста будет object_list
     paginate_by = 3
     template_name = 'blog/post/list.html'
+
 
 def post_share(request, post_id): # Получение статьи по id
     post = get_object_or_404(Post, id=post_id, status='published')
