@@ -18,15 +18,11 @@ def post_list(request, tag_slug=None):
     paginator = Paginator(object_list, 3) #инициализир обж класса Paginator, указав кол-во постов на каждой странице
     page = request.GET.get('page') #Извлекаем из запроса GET параметр page, указывающий текущую стр
     try:
-        posts = paginator.page(page) #получаем список обж на нужной стр с помощью метода page класса Paginator,
-                                    #после объект передаётся в list.html, в конце передаётся в pagination.html
-    except PageNotAnInteger:
-        #Если страница не целое число
+        posts = paginator.page(page) #получаем список обж на нужной стр с помощью метода page класса Paginator, после объект передаётся в list.html, в конце передаётся в pagination.html
+    except PageNotAnInteger:  # Если страница не целое число
         posts = paginator.page(1)
-    except EmptyPage:
-        #если номер страницы больше общего кол-ва страниц, возвращаем последнюю
+    except EmptyPage:  # если номер страницы больше общего кол-ва страниц, возвращаем последнюю
         posts = paginator.page(paginator.num_pages)
-
     return render(request, 'blog/post/list.html',
                   {'page': page, 'posts': posts, 'tag': tag})  # Передаём номер страницы и объект в шаблон
 
@@ -34,17 +30,14 @@ def post_list(request, tag_slug=None):
     #return render(request, 'blog/post/list.html', {'posts': posts})
 
 
-
-def post_detail(request, year, month, day, post123):
+def post_detail(request, year, month, day, post123): #slug (unique_for_date='publish'), поэтому у каждого поста уникальный slug, если они созданы в один день
     post = get_object_or_404(Post, slug=post123, status='published', publish__year=year,
-                             publish__month=month, publish__day=day)
-    # Функция возвращает объект по указанным параметрам или 404
-    #slug (unique_for_date='publish'), поэтому у каждого поста уникальный slug, если они созданы в один день
+                             publish__month=month, publish__day=day)  # Функция возвращает объект по указанным параметрам или 404
+
     '''Список активных комментариев для статьи'''
     comments = post.comments.filter(active=True) #менеджер определён в модели, related_name
     new_comment = None
-    if request.method == 'POST':
-        #если коммент отправлен
+    if request.method == 'POST':  # если коммент отправлен
         comment_form = CommentForm(data=request.POST) #заполняем форму данными из запроса
         if comment_form.is_valid():
             new_comment = comment_form.save(commit=False) # создаём но не сохраняем в бд
@@ -64,6 +57,7 @@ render(request,'users/register.html', {'form': form, 'first_name': 'John'})
 То, что вы предоставляете в контексте, доступно в шаблоне
 """
 
+
 class PostListView(ListView):
     """Аналог post_list"""
     queryset = Post.published.all()  #если использовать model=Post, будет менеджер по умолчанию (objects)
@@ -79,13 +73,11 @@ def post_share(request, post_id): # Получение статьи по id
         form = EmailPostForm1(request.POST)
         if form.is_valid():
             cd = form.cleaned_data #словарь с полями формы и их значениями, если валидац не пройдена то в cleaned_data попадут только корректные поля
-            # Отправка электронной почты
             post_url = request.build_absolute_uri(post.get_absolute_url()) #абсолютная ссылка на статью
-
             subject = f'{cd["name"]} ({cd["email"]}) recommends you reading" {post.title}"'
             #subject = f'{cd["name"]} recommends you reading" {post.title}'
             message = f'Read"{post.title}" at {post_url}\n\n{cd["name"]}\'s comments: {cd["comments"]}'
-            send_mail(subject, message, '', [cd["to"],]) # https://django.fun/docs/django/ru/4.0/topics/email/
+            send_mail(subject, message, '', [cd["to"], ]) # https://django.fun/docs/django/ru/4.0/topics/email/
             sent = True # Требуются параметры subject, message, from_email и recipient_list, from_email: Строка. Если None, Django будет использовать значение параметра DEFAULT_FROM_EMAIL
     else:
         form = EmailPostForm1()
