@@ -50,10 +50,9 @@
 
     {% if new_comment %}
       <h2>Your comment has been added.</h2>
-
     {% else %}
-
     {% endif %}
+
     <h2>Add a new comment</h2>
     <form action="." method="post"> <!--создали HTML-элемент формы, который будет отправляться на сервер методом POST-->
         {{ comment_form.as_p }}

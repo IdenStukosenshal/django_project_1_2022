@@ -13,10 +13,6 @@ class PublishedManager(models.Manager):
         return super().get_queryset().filter(status='published')  # метод get_queryset() менеджера возвращает Queryset, переопределили и добавили фильтр
 
 
-#
-#
-
-
 class Post(models.Model):
     STATUS_CHOICES = (
         ('draft', 'Draft'),
