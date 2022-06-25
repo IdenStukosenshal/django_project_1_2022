@@ -3,6 +3,7 @@
 
 {% block content %}
     <h1>{{ post.title }}</h1>
+    <a href="{% url 'blog:post_list' %}">Back to posts</a>
 
     <p class="date">
         Published {{ post.publish }} by {{ post.author }}

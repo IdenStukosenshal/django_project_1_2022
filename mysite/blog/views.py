@@ -34,6 +34,7 @@ def post_detail(request, year, month, day, post123): #slug (unique_for_date='pub
     post = get_object_or_404(Post, slug=post123, status='published', publish__year=year,
                              publish__month=month, publish__day=day)  # Функция возвращает объект по указанным параметрам или 404
 
+
     '''Список активных комментариев для статьи'''
     comments = post.comments.filter(active=True) #менеджер определён в модели, related_name
     new_comment = None
