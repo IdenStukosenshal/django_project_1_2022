@@ -5,7 +5,7 @@ from django.views.generic import ListView
 from .forms import EmailPostForm1, CommentForm
 from django.core.mail import send_mail
 from taggit.models import Tag
-
+from django.db.models import Count
 
 def post_list(request, tag_slug=None):
     object_list = Post.published.all() # запрашиваем все "published" посты из базы данных
@@ -45,8 +45,15 @@ def post_detail(request, year, month, day, post123): #slug (unique_for_date='pub
             new_comment.save()
     else:
         comment_form = CommentForm()
+
+    post_tags_ids = post.tags.values_list('id', flat=True) #  получает все ID тегов текущей статьи. Метод QuerySet’а values_list() возвращает кортежи со значениями заданного поля. Мы указали flat=True, чтобы получить «плоский» список вида [1, 2, 3, ...]
+    similar_posts = Post.published.filter(tags__in=post_tags_ids).exclude(id=post.id) #  получает все статьи, содержащие хоть один тег из полученных ранее, исключая текущую статью
+    similar_posts = similar_posts.annotate(same_tags=Count('tags')).order_by('-same_tags', '-publish')[:4] #  использует функцию агрегации Count для формирования вычисляемого поля same_tags, которое  содержит определенное количество совпадающих тегов
+    # сортирует список опубликованных статей в убывающем порядке по количеству совпадающих тегов для
+    # отображения первыми максимально похожих статей и делает срез результата для отображения только четырех статей
     return render(request, 'blog/post/detail.html', {'post': post, 'comments': comments,
-                                                     'new_comment': new_comment, 'comment_form': comment_form})
+                                                     'new_comment': new_comment, 'comment_form': comment_form,
+                                                     'similar_posts': similar_posts})
 
 
 """Контекст
@@ -75,7 +82,6 @@ def post_share(request, post_id): # Получение статьи по id
             cd = form.cleaned_data #словарь с полями формы и их значениями, если валидац не пройдена то в cleaned_data попадут только корректные поля
             post_url = request.build_absolute_uri(post.get_absolute_url()) #абсолютная ссылка на статью
             subject = f'{cd["name"]} ({cd["email"]}) recommends you reading" {post.title}"'
-            #subject = f'{cd["name"]} recommends you reading" {post.title}'
             message = f'Read"{post.title}" at {post_url}\n\n{cd["name"]}\'s comments: {cd["comments"]}'
             send_mail(subject, message, '', [cd["to"], ]) # https://django.fun/docs/django/ru/4.0/topics/email/
             sent = True # Требуются параметры subject, message, from_email и recipient_list, from_email: Строка. Если None, Django будет использовать значение параметра DEFAULT_FROM_EMAIL

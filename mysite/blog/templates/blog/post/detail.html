@@ -1,12 +1,37 @@
 {% extends "blog/base.html" %}
 {% block title %}{{ post.title }}{% endblock %}
+
 {% block content %}
     <h1>{{ post.title }}</h1>
-    <p class="date">Published {{ post.publish }} by {{ post.author }}</p>
+
+    <p class="date">
+        Published {{ post.publish }} by {{ post.author }}
+    </p>
     {{ post.body|linebreaks }}
     <p>
         <a href="{% url 'blog:post_share' post.id %}">Share this post</a> <!-- получаем url с помощью id поста, получается http://127.0.0.1:8000/blog/1/share/ -->
     </p>
+
+    <p class="tags">
+      Tags:
+        {% for tag in post.tags.all %}
+          <a href="{% url 'blog:post_list_by_tag' tag.slug %}">
+            {{ tag.name }}
+          </a>
+          {%if not forloop.last %}, {% endif %}
+        {% endfor %}
+    </p>
+
+  <div id="sidebar">
+      <h2>Similar posts</h2>
+      {% for post in similar_posts %}
+        <p>
+            <a href="{{ post.get_absolute_url }}">{{ post.title }}</a>
+        </p>
+      {% empty %}
+        There are no similar posts yet.
+      {% endfor %}
+  </div>
 
     {% with comments.count as total_comments %} <!-- Тег  with позволяет назначить переменной новое имя, которое можно использовать внутри блока до ближайшего тега endwith -->
         <h2>{{ total_comments }} comment{{ total_comments|pluralize }}</h2> <!--Мы используем ORM Django в шаблоне, выполняя comments.count()-->
@@ -25,12 +50,15 @@
 
     {% if new_comment %}
       <h2>Your comment has been added.</h2>
+
     {% else %}
-      <h2>Add a new comment</h2>
-      <form action="." method="post"> <!--создали HTML-элемент формы, который будет отправляться на сервер методом POST-->
-          {{ comment_form.as_p }}
-          {% csrf_token %}
-          <p><input type="submit" value="Add comment"></p>
-      </form>
+
     {% endif %}
+    <h2>Add a new comment</h2>
+    <form action="." method="post"> <!--создали HTML-элемент формы, который будет отправляться на сервер методом POST-->
+        {{ comment_form.as_p }}
+        {% csrf_token %}
+        <p><input type="submit" value="Add comment"></p>
+    </form>
+
 {% endblock%}
