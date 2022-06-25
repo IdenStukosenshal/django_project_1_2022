@@ -1,6 +1,6 @@
 from django import template
 from ..models import Post
-
+from django.db.models import Count
 
 """Для того чтобы зарегистрировать наши теги, каждый модуль с функциями тегов должен определять переменную
  register. Эта переменная является объектом класса template.Library и используется 
@@ -24,3 +24,7 @@ def show_latest_posts(count=5):
     return {'latest_posts': latest_posts} # Инклюзивные теги должны возвращать только словари контекста, который затем будет использован для формирования HTML-шаблона
 #Чтобы задать любое другое количество статей, используйте такую запись: {% show_latest_posts число %}
 
+
+@register.simple_tag
+def get_most_commented_posts(count=5):
+    return Post.published.annotate(total_comments=Count('comments')).order_by('-total_comments')[:count]
