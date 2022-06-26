@@ -2,6 +2,9 @@ from django import template
 from ..models import Post
 from django.db.models import Count
 
+from django.utils.safestring import mark_safe
+import markdown
+
 """Для того чтобы зарегистрировать наши теги, каждый модуль с функциями тегов должен определять переменную
  register. Эта переменная является объектом класса template.Library и используется 
 для регистрации пользовательских тегов и фильтров в системе. В файле мы определяем тег total_posts, 
@@ -28,3 +31,8 @@ def show_latest_posts(count=5):
 @register.simple_tag
 def get_most_commented_posts(count=5):
     return Post.published.annotate(total_comments=Count('comments')).order_by('-total_comments')[:count]
+
+
+@register.filter(name='markdown')  # {{ variable|markdown }} # https://daringfireball.net/projects/markdown/basics
+def markdown_format(text):
+    return mark_safe(markdown.markdown(text)) # используем функцию mark_safe, чтобы пометить результат работы фильтра как HTML-код, который нужно учитывать при построении шаблона

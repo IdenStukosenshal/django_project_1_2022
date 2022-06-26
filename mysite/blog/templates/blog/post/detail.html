@@ -1,4 +1,5 @@
 {% extends "blog/base.html" %}
+{% load blog_tags %}
 {% block title %}{{ post.title }}{% endblock %}
 
 {% block content %}
@@ -8,7 +9,7 @@
     <p class="date">
         Published {{ post.publish }} by {{ post.author }}
     </p>
-    {{ post.body|linebreaks }}
+    {{ post.body|markdown|linebreaks }} <!--{{ post.body|linebreaks }}-->
     <p>
         <a href="{% url 'blog:post_share' post.id %}">Share this post</a> <!-- получаем url с помощью id поста, получается http://127.0.0.1:8000/blog/1/share/ -->
     </p>
