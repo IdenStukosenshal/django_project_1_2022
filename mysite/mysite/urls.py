@@ -25,5 +25,5 @@ urlpatterns = [
     path('blog/', include('blog.urls', namespace='blog')),
     #path('', include('blog.urls', namespace='this_name_is_not_used')),
     path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap')
-
 ]
+
