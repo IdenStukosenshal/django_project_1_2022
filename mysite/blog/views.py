@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404
 from.models import Post, Comment
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.views.generic import ListView
-from .forms import EmailPostForm1, CommentForm, SearchForm
+from .forms import EmailPostForm1, CommentForm, SearchForm, CreatePostForm
 from django.core.mail import send_mail
 from taggit.models import Tag
 from django.db.models import Count
@@ -105,4 +105,24 @@ def post_search(request):
         query = form.cleaned_data['query']
         results = Post.objects.annotate(search=SearchVector('title', 'body'), ).filter(search=query)
     return render(request, 'blog/post/search.html', {'form': form, 'query': query, 'results': results})
+
+
+
+
+
+
+
+
+
+def create_post(request):
+    new_post = None
+    if request.method == 'POST':
+        post_form = CreatePostForm(data=request.POST)
+        if post_form.is_valid():
+            post_form = post_form
+            new_post = post_form.save()
+
+    else:
+        post_form = CreatePostForm()
+    return render(request, 'blog/post/createpost.html', {'post_form': post_form, })
 

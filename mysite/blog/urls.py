@@ -14,6 +14,13 @@ urlpatterns = [
 
 
 
+
+
+
+    path('createpost/', views.create_post, name='create_post'),
+
+
+
 ]
 
 ''' (3 строка) значение, определенное в шаблоне как <parameter>, возвращается в виде строки в ф-цию views.post_detail,
