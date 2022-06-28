@@ -5,6 +5,9 @@
  
 {% block content %}
   <h1>My Blog</h1>
+
+  <a href="{% url 'blog:post_search' %}">Search</a>
+
   {% if tag %}
     <h2>Posts tagged with"{{ tag.name }}"</h2>
   {% endif %}
