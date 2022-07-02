@@ -3,9 +3,11 @@
 
 requirements:
 
+
+* Django==4.0.5
 * django-taggit==3.0.0
 * Markdown==3.3.7
 * psycopg==3.0.15
-* psycopg2==2.9.3
 * sqlparse==0.4.2
+
 
