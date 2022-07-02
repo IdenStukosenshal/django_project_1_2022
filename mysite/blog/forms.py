@@ -28,4 +28,6 @@ class SearchForm(forms.Form):
 class CreatePostForm(forms.ModelForm):
     class Meta:
         model = Post
-        fields = ('title', 'author', 'body', 'publish', 'status', 'tags')
+        fields = ('title', 'slug', 'author', 'body', 'publish', 'status', 'tags')
+        labels = {'title': 'title', 'slug': 'slug', 'author': 'автор', 'body': 'техт', 'publish': 'время публикации', 'status': 'status', 'tags': 'теги'}
+
