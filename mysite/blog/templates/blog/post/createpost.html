@@ -5,7 +5,14 @@
 {% block content %}
     <h1>Add a new post</h1>
     <form action="." method="post">
-        {{ post_form.as_p }}
+        {{ post_form.title }}<br>
+        {{ post_form.slug }}<br>
+        {{ post_form.author }}<br>
+        {{ post_form.body }}<br>
+        {{ post_form.publish }}<br>
+        {{ post_form.status }}<br>
+        {{ post_form.tags }}<br>
+
         {% csrf_token %}
         <p><input type="submit" value="Add post"></p>
     </form>

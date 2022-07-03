@@ -30,4 +30,12 @@ class CreatePostForm(forms.ModelForm):
         model = Post
         fields = ('title', 'slug', 'author', 'body', 'publish', 'status', 'tags')
         labels = {'title': 'title', 'slug': 'slug', 'author': 'автор', 'body': 'техт', 'publish': 'время публикации', 'status': 'status', 'tags': 'теги'}
+        widgets = {'title': forms.TextInput(attrs={'placeholder': 'Заголовок'}),
+                   'slug': forms.TextInput(attrs={'placeholder': 'slug'}),
+                   'author': forms.TextInput(attrs={'placeholder': 'Автор'}),
+                   'body': forms.Textarea(attrs={'placeholder': 'Текст статьи'}),
+                   'publish': forms.DateTimeInput(attrs={'placeholder': 'Дата публикации'}),
+
+                   'tags': forms.TextInput(attrs={'placeholder': 'Теги'}),
+                   }
 

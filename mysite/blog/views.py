@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from.models import Post, Comment
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.views.generic import ListView
@@ -129,6 +129,7 @@ def create_post(request):
         post_form = CreatePostForm(data=request.POST)
         if post_form.is_valid():
             new_post = post_form.save()
+            return redirect('blog:post_list')
 
     else:
         post_form = CreatePostForm()
