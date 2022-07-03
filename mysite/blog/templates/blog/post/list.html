@@ -7,6 +7,7 @@
   <h1>My Blog</h1>
 
   <a href="{% url 'blog:post_search' %}">Search</a>
+  <a href="{% url 'blog:create_post' %}">Create Post</a>
 
   {% if tag %}
     <h2>Posts tagged with"{{ tag.name }}"</h2>

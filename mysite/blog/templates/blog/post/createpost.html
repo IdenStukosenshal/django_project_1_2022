@@ -4,6 +4,7 @@
 
 {% block content %}
     <h1>Add a new post</h1>
+    <a href="{% url 'blog:post_list' %}">Back to Posts</a>
     <form action="." method="post">
         {{ post_form.title }}<br>
         {{ post_form.slug }}<br>
