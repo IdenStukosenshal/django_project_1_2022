@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.urls import reverse
 from taggit.managers import TaggableManager
 
-
+from django.utils.text import slugify
 ''''''
 
 class PublishedManager(models.Manager):
@@ -44,6 +44,10 @@ class Post(models.Model):
     def __str__(self):
         return self.title
 
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.title)
+        super(Post, self).save(*args, **kwargs)  # попробовать добавить в прошлый проект генерацию слага
 
 class Comment(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments') #один ко многим,
@@ -59,5 +63,7 @@ class Comment(models.Model):
 
     def __str__(self):
         return f'Comment by {self.name} on {self.post} .'
+
+
 
 
